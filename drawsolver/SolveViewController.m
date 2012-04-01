@@ -43,8 +43,21 @@
     // Do any additional setup after loading the view from its nib.
     self.screenshotView.image = image;
     
+    NSString *version;
+    CGRect cropRect;
+
+    if(image.size.width == 320 && image.size.height == 640) {
+        version = @"lo";
+        cropRect = CGRectMake(0, 331, 320, 149);
+    }
+    else if(image.size.width == 640 && image.size.height == 960) {
+        version = @"hi";
+        cropRect = CGRectMake(0, 661, 640, 299);
+    }
+    else {
+        NSLog(@"not a valid screenshot");
+    }
     
-    CGRect cropRect = CGRectMake(0, 661, 640, 299);
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);        
     NSData *imageData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imageRef], 0.10);
     CGImageRelease(imageRef);    
