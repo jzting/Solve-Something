@@ -15,7 +15,6 @@
 @implementation AppDelegate
 
 @synthesize window = _window;
-@synthesize navigationController = _navigationController;
 
 void uncaughtExceptionHandler(NSException *exception) {
     [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
@@ -24,20 +23,16 @@ void uncaughtExceptionHandler(NSException *exception) {
 - (void)dealloc
 {
     [_window release];
-    [_navigationController release];
     [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];  
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    // Override point for customization after application launch.
-        
-    HomeViewController *rootViewController = [[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil] autorelease];
-    rootViewController.title = @"Draw Solver";
-    self.navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];    
-    self.window.rootViewController = self.navigationController;
+     
+    HomeViewController *homeViewController = [[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil] autorelease];
+    self.window.rootViewController = homeViewController;
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [FlurryAnalytics startSession:@"AQKQNCHBKC4Y5PIN8VLB"];
