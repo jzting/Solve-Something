@@ -20,6 +20,13 @@
 		BE3E8A5E1515BEB300A4CF28 /* SolveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE3E8A5C1515BEB300A4CF28 /* SolveViewController.m */; };
 		BE3E8A5F1515BEB300A4CF28 /* SolveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE3E8A5D1515BEB300A4CF28 /* SolveViewController.xib */; };
 		BE3E8A631519903300A4CF28 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE3E8A621519903200A4CF28 /* Entitlements.plist */; };
+		BE9A318B152908E20026B8E2 /* NSString+HMAC.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9A318A152908E20026B8E2 /* NSString+HMAC.m */; };
+		BE9A319915291A8D0026B8E2 /* Appirater.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9A318E15291A8C0026B8E2 /* Appirater.m */; };
+		BE9A319A15291A8D0026B8E2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE9A318F15291A8C0026B8E2 /* Localizable.strings */; };
+		BE9A319B15291A8D0026B8E2 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BE9A319715291A8C0026B8E2 /* README.md */; };
+		BE9A319D15291AAF0026B8E2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A319C15291AAF0026B8E2 /* CFNetwork.framework */; };
+		BE9A319F15291AB50026B8E2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */; };
+		BE9A31A9152924680026B8E2 /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31A8152924680026B8E2 /* libFlurryAnalytics.a */; };
 		BE9CC7F31515904D002CE8C2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F21515904D002CE8C2 /* UIKit.framework */; };
 		BE9CC7F51515904D002CE8C2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F41515904D002CE8C2 /* Foundation.framework */; };
 		BE9CC7F71515904D002CE8C2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F61515904D002CE8C2 /* CoreGraphics.framework */; };
@@ -56,7 +63,24 @@
 		BE3E8A5B1515BEB300A4CF28 /* SolveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SolveViewController.h; sourceTree = "<group>"; };
 		BE3E8A5C1515BEB300A4CF28 /* SolveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SolveViewController.m; sourceTree = "<group>"; };
 		BE3E8A5D1515BEB300A4CF28 /* SolveViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SolveViewController.xib; sourceTree = "<group>"; };
-		BE3E8A621519903200A4CF28 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
+		BE3E8A621519903200A4CF28 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Entitlements.plist; path = ../Entitlements.plist; sourceTree = "<group>"; };
+		BE9A3189152908E20026B8E2 /* NSString+HMAC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HMAC.h"; sourceTree = "<group>"; };
+		BE9A318A152908E20026B8E2 /* NSString+HMAC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HMAC.m"; sourceTree = "<group>"; };
+		BE9A318D15291A8C0026B8E2 /* Appirater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appirater.h; sourceTree = "<group>"; };
+		BE9A318E15291A8C0026B8E2 /* Appirater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appirater.m; sourceTree = "<group>"; };
+		BE9A319015291A8C0026B8E2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319115291A8C0026B8E2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319215291A8C0026B8E2 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319315291A8C0026B8E2 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319415291A8C0026B8E2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319515291A8C0026B8E2 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319615291A8C0026B8E2 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319715291A8C0026B8E2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		BE9A319815291A8C0026B8E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE9A319C15291AAF0026B8E2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		BE9A31A7152924680026B8E2 /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
+		BE9A31A8152924680026B8E2 /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
 		BE9CC7EE1515904D002CE8C2 /* drawsolver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drawsolver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9CC7F21515904D002CE8C2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BE9CC7F41515904D002CE8C2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -78,10 +102,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE9A319F15291AB50026B8E2 /* SystemConfiguration.framework in Frameworks */,
+				BE9A319D15291AAF0026B8E2 /* CFNetwork.framework in Frameworks */,
 				BE9CC81015159217002CE8C2 /* AssetsLibrary.framework in Frameworks */,
 				BE9CC7F31515904D002CE8C2 /* UIKit.framework in Frameworks */,
 				BE9CC7F51515904D002CE8C2 /* Foundation.framework in Frameworks */,
 				BE9CC7F71515904D002CE8C2 /* CoreGraphics.framework in Frameworks */,
+				BE9A31A9152924680026B8E2 /* libFlurryAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,10 +144,31 @@
 			path = AFNetworking/AFNetworking;
 			sourceTree = "<group>";
 		};
+		BE9A318C15291A8C0026B8E2 /* appirater */ = {
+			isa = PBXGroup;
+			children = (
+				BE9A318D15291A8C0026B8E2 /* Appirater.h */,
+				BE9A318E15291A8C0026B8E2 /* Appirater.m */,
+				BE9A318F15291A8C0026B8E2 /* Localizable.strings */,
+				BE9A319715291A8C0026B8E2 /* README.md */,
+			);
+			path = appirater;
+			sourceTree = "<group>";
+		};
+		BE9A31A6152924680026B8E2 /* FlurryAnalytics */ = {
+			isa = PBXGroup;
+			children = (
+				BE9A31A7152924680026B8E2 /* FlurryAnalytics.h */,
+				BE9A31A8152924680026B8E2 /* libFlurryAnalytics.a */,
+			);
+			path = FlurryAnalytics;
+			sourceTree = "<group>";
+		};
 		BE9CC7E31515904D002CE8C2 = {
 			isa = PBXGroup;
 			children = (
-				BE3E8A621519903200A4CF28 /* Entitlements.plist */,
+				BE9A31A6152924680026B8E2 /* FlurryAnalytics */,
+				BE9A318C15291A8C0026B8E2 /* appirater */,
 				BE3E8A051515938500A4CF28 /* AFNetworking */,
 				BE9CC7F81515904D002CE8C2 /* drawsolver */,
 				BE9CC7F11515904D002CE8C2 /* Frameworks */,
@@ -139,6 +187,8 @@
 		BE9CC7F11515904D002CE8C2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */,
+				BE9A319C15291AAF0026B8E2 /* CFNetwork.framework */,
 				BE9CC80F15159217002CE8C2 /* AssetsLibrary.framework */,
 				BE9CC7F21515904D002CE8C2 /* UIKit.framework */,
 				BE9CC7F41515904D002CE8C2 /* Foundation.framework */,
@@ -159,6 +209,8 @@
 				BE3E8A5C1515BEB300A4CF28 /* SolveViewController.m */,
 				BE3E8A5D1515BEB300A4CF28 /* SolveViewController.xib */,
 				BE9CC7F91515904D002CE8C2 /* Supporting Files */,
+				BE9A3189152908E20026B8E2 /* NSString+HMAC.h */,
+				BE9A318A152908E20026B8E2 /* NSString+HMAC.m */,
 			);
 			path = drawsolver;
 			sourceTree = "<group>";
@@ -166,6 +218,7 @@
 		BE9CC7F91515904D002CE8C2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BE3E8A621519903200A4CF28 /* Entitlements.plist */,
 				BE9CC7FA1515904D002CE8C2 /* drawsolver-Info.plist */,
 				BE9CC7FB1515904D002CE8C2 /* InfoPlist.strings */,
 				BE9CC7FE1515904D002CE8C2 /* main.m */,
@@ -209,6 +262,13 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				de,
+				es,
+				fr,
+				ja,
+				ko,
+				pl,
+				ru,
 			);
 			mainGroup = BE9CC7E31515904D002CE8C2;
 			productRefGroup = BE9CC7EF1515904D002CE8C2 /* Products */;
@@ -229,6 +289,8 @@
 				BE9CC8091515904D002CE8C2 /* HomeViewController.xib in Resources */,
 				BE3E8A5F1515BEB300A4CF28 /* SolveViewController.xib in Resources */,
 				BE3E8A631519903300A4CF28 /* Entitlements.plist in Resources */,
+				BE9A319A15291A8D0026B8E2 /* Localizable.strings in Resources */,
+				BE9A319B15291A8D0026B8E2 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,12 +315,29 @@
 				BE3E8A231515938500A4CF28 /* AFXMLRequestOperation.m in Sources */,
 				BE3E8A241515938500A4CF28 /* UIImageView+AFNetworking.m in Sources */,
 				BE3E8A5E1515BEB300A4CF28 /* SolveViewController.m in Sources */,
+				BE9A318B152908E20026B8E2 /* NSString+HMAC.m in Sources */,
+				BE9A319915291A8D0026B8E2 /* Appirater.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		BE9A318F15291A8C0026B8E2 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE9A319015291A8C0026B8E2 /* de */,
+				BE9A319115291A8C0026B8E2 /* en */,
+				BE9A319215291A8C0026B8E2 /* es */,
+				BE9A319315291A8C0026B8E2 /* fr */,
+				BE9A319415291A8C0026B8E2 /* ja */,
+				BE9A319515291A8C0026B8E2 /* ko */,
+				BE9A319615291A8C0026B8E2 /* pl */,
+				BE9A319815291A8C0026B8E2 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		BE9CC7FB1515904D002CE8C2 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -304,6 +383,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "drawsolver/drawsolver-Prefix.pch";
 				INFOPLIST_FILE = "drawsolver/drawsolver-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/FlurryAnalytics\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -358,6 +441,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "drawsolver/drawsolver-Prefix.pch";
 				INFOPLIST_FILE = "drawsolver/drawsolver-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/FlurryAnalytics\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -369,6 +456,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "drawsolver/drawsolver-Prefix.pch";
 				INFOPLIST_FILE = "drawsolver/drawsolver-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/FlurryAnalytics\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

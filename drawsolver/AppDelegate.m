@@ -8,11 +8,17 @@
 
 #import "AppDelegate.h"
 #import "HomeViewController.h"
+#import "Appirater.h"
+#import "FlurryAnalytics.h"
 
 @implementation AppDelegate
 
 @synthesize window = _window;
 @synthesize navigationController = _navigationController;
+
+void uncaughtExceptionHandler(NSException *exception) {
+    [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
+}
 
 - (void)dealloc
 {
@@ -31,6 +37,9 @@
     self.navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];    
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+    [FlurryAnalytics startSession:@"AQKQNCHBKC4Y5PIN8VLB"];
+    [Appirater appLaunched:YES];
     return YES;
 }
 
@@ -55,6 +64,7 @@
     /*
      Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
      */
+    [Appirater appEnteredForeground:YES];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

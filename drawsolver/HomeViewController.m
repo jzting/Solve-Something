@@ -9,6 +9,7 @@
 #import "HomeViewController.h"
 #import "SolveViewController.h"
 #import "AssetsLibrary/AssetsLibrary.h"
+#import "FlurryAnalytics.h"
 
 @implementation HomeViewController
 
@@ -63,6 +64,7 @@
 }
 
 - (IBAction)loadLatest:(id)sender {
+    [FlurryAnalytics logEvent:@"QuickImport"];    
     ALAssetsLibrary *library = [[[ALAssetsLibrary alloc] init] autorelease];      
     dispatch_async(dispatch_get_main_queue(), ^{
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -91,10 +93,12 @@
 }
 
 - (IBAction)showPicker:(id)sender {
+    [FlurryAnalytics logEvent:@"CameraRoll"];    
     [self presentModalViewController:self.picker animated:YES];            
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {    
+    [FlurryAnalytics logEvent:@"CameraRoll-Finished"];
     SolveViewController *viewController = [[[SolveViewController alloc] initWithNibName:@"SolveViewController" bundle:nil] autorelease];
     viewController.image = [info valueForKey:UIImagePickerControllerOriginalImage];
     [self dismissModalViewControllerAnimated:NO];       

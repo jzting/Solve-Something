@@ -1,3 +1,6 @@
 [submodule "AFNetworking"]
 	path = AFNetworking
 	url = https://github.com/AFNetworking/AFNetworking.git
+[submodule "appirater"]
+	path = appirater
+	url = https://github.com/arashpayan/appirater.git
