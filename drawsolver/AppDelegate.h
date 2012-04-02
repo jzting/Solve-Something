@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GSAdEngine.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

@@ -27,6 +27,15 @@
 		BE9A319D15291AAF0026B8E2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A319C15291AAF0026B8E2 /* CFNetwork.framework */; };
 		BE9A319F15291AB50026B8E2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */; };
 		BE9A31A9152924680026B8E2 /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31A8152924680026B8E2 /* libFlurryAnalytics.a */; };
+		BE9A31AF15292BC20026B8E2 /* libGreystripeSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31AE15292BC20026B8E2 /* libGreystripeSDK.a */; };
+		BE9A31B115292D3C0026B8E2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31B015292D3C0026B8E2 /* AudioToolbox.framework */; };
+		BE9A31B315292D4C0026B8E2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31B215292D4C0026B8E2 /* AVFoundation.framework */; };
+		BE9A31B515292D530026B8E2 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31B415292D530026B8E2 /* MediaPlayer.framework */; };
+		BE9A31B715292D580026B8E2 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31B615292D580026B8E2 /* OpenAL.framework */; };
+		BE9A31B915292D5F0026B8E2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31B815292D5F0026B8E2 /* QuartzCore.framework */; };
+		BE9A31BB15292D680026B8E2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31BA15292D680026B8E2 /* libsqlite3.dylib */; };
+		BE9A31BD15292D6D0026B8E2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31BC15292D6D0026B8E2 /* libz.dylib */; };
+		BE9A31BF1529321C0026B8E2 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A31BE1529321C0026B8E2 /* iAd.framework */; };
 		BE9CC7F31515904D002CE8C2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F21515904D002CE8C2 /* UIKit.framework */; };
 		BE9CC7F51515904D002CE8C2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F41515904D002CE8C2 /* Foundation.framework */; };
 		BE9CC7F71515904D002CE8C2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9CC7F61515904D002CE8C2 /* CoreGraphics.framework */; };
@@ -81,6 +90,18 @@
 		BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BE9A31A7152924680026B8E2 /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
 		BE9A31A8152924680026B8E2 /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
+		BE9A31AB15292BC20026B8E2 /* GreystripeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GreystripeDelegate.h; sourceTree = "<group>"; };
+		BE9A31AC15292BC20026B8E2 /* GSAdEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSAdEngine.h; sourceTree = "<group>"; };
+		BE9A31AD15292BC20026B8E2 /* GSAdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSAdView.h; sourceTree = "<group>"; };
+		BE9A31AE15292BC20026B8E2 /* libGreystripeSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGreystripeSDK.a; sourceTree = "<group>"; };
+		BE9A31B015292D3C0026B8E2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BE9A31B215292D4C0026B8E2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		BE9A31B415292D530026B8E2 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		BE9A31B615292D580026B8E2 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		BE9A31B815292D5F0026B8E2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		BE9A31BA15292D680026B8E2 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		BE9A31BC15292D6D0026B8E2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		BE9A31BE1529321C0026B8E2 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		BE9CC7EE1515904D002CE8C2 /* drawsolver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drawsolver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9CC7F21515904D002CE8C2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BE9CC7F41515904D002CE8C2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -102,6 +123,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE9A31BF1529321C0026B8E2 /* iAd.framework in Frameworks */,
+				BE9A31BD15292D6D0026B8E2 /* libz.dylib in Frameworks */,
+				BE9A31BB15292D680026B8E2 /* libsqlite3.dylib in Frameworks */,
+				BE9A31B915292D5F0026B8E2 /* QuartzCore.framework in Frameworks */,
+				BE9A31B715292D580026B8E2 /* OpenAL.framework in Frameworks */,
+				BE9A31B515292D530026B8E2 /* MediaPlayer.framework in Frameworks */,
+				BE9A31B315292D4C0026B8E2 /* AVFoundation.framework in Frameworks */,
+				BE9A31B115292D3C0026B8E2 /* AudioToolbox.framework in Frameworks */,
 				BE9A319F15291AB50026B8E2 /* SystemConfiguration.framework in Frameworks */,
 				BE9A319D15291AAF0026B8E2 /* CFNetwork.framework in Frameworks */,
 				BE9CC81015159217002CE8C2 /* AssetsLibrary.framework in Frameworks */,
@@ -109,6 +138,7 @@
 				BE9CC7F51515904D002CE8C2 /* Foundation.framework in Frameworks */,
 				BE9CC7F71515904D002CE8C2 /* CoreGraphics.framework in Frameworks */,
 				BE9A31A9152924680026B8E2 /* libFlurryAnalytics.a in Frameworks */,
+				BE9A31AF15292BC20026B8E2 /* libGreystripeSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,9 +194,21 @@
 			path = FlurryAnalytics;
 			sourceTree = "<group>";
 		};
+		BE9A31AA15292BC20026B8E2 /* GSSDK 3.1.3 */ = {
+			isa = PBXGroup;
+			children = (
+				BE9A31AB15292BC20026B8E2 /* GreystripeDelegate.h */,
+				BE9A31AC15292BC20026B8E2 /* GSAdEngine.h */,
+				BE9A31AD15292BC20026B8E2 /* GSAdView.h */,
+				BE9A31AE15292BC20026B8E2 /* libGreystripeSDK.a */,
+			);
+			path = "GSSDK 3.1.3";
+			sourceTree = "<group>";
+		};
 		BE9CC7E31515904D002CE8C2 = {
 			isa = PBXGroup;
 			children = (
+				BE9A31AA15292BC20026B8E2 /* GSSDK 3.1.3 */,
 				BE9A31A6152924680026B8E2 /* FlurryAnalytics */,
 				BE9A318C15291A8C0026B8E2 /* appirater */,
 				BE3E8A051515938500A4CF28 /* AFNetworking */,
@@ -187,6 +229,14 @@
 		BE9CC7F11515904D002CE8C2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE9A31BC15292D6D0026B8E2 /* libz.dylib */,
+				BE9A31BA15292D680026B8E2 /* libsqlite3.dylib */,
+				BE9A31BE1529321C0026B8E2 /* iAd.framework */,
+				BE9A31B815292D5F0026B8E2 /* QuartzCore.framework */,
+				BE9A31B615292D580026B8E2 /* OpenAL.framework */,
+				BE9A31B415292D530026B8E2 /* MediaPlayer.framework */,
+				BE9A31B215292D4C0026B8E2 /* AVFoundation.framework */,
+				BE9A31B015292D3C0026B8E2 /* AudioToolbox.framework */,
 				BE9A319E15291AB50026B8E2 /* SystemConfiguration.framework */,
 				BE9A319C15291AAF0026B8E2 /* CFNetwork.framework */,
 				BE9CC80F15159217002CE8C2 /* AssetsLibrary.framework */,
@@ -386,6 +436,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
+					"\"$(SRCROOT)/GSSDK 3.1.3\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -444,6 +495,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
+					"\"$(SRCROOT)/GSSDK 3.1.3\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -459,6 +511,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
+					"\"$(SRCROOT)/GSSDK 3.1.3\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

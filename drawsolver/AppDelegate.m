@@ -11,6 +11,7 @@
 #import "Appirater.h"
 #import "FlurryAnalytics.h"
 
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -29,6 +30,7 @@ void uncaughtExceptionHandler(NSException *exception) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];  
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
         
@@ -36,10 +38,22 @@ void uncaughtExceptionHandler(NSException *exception) {
     rootViewController.title = @"Draw Solver";
     self.navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];    
     self.window.rootViewController = self.navigationController;
-    [self.window makeKeyAndVisible];
+    
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [FlurryAnalytics startSession:@"AQKQNCHBKC4Y5PIN8VLB"];
     [Appirater appLaunched:YES];
+    
+	//Define two ad slots. Name them and give the sizes as one banner and one fullscreen.
+	GSAdSlotDescription * slot1 = [GSAdSlotDescription descriptionWithSize:kGSAdSizeBanner name:@"bannerSlot"];
+	GSAdSlotDescription * slot2 = [GSAdSlotDescription descriptionWithSize:kGSAdSizeIPhoneFullScreen name:@"fullscreenSlot"];
+	
+	//Start the GSAdEngine with our slots.
+	[GSAdEngine startupWithAppID:@"bd7e5b28-f555-4edf-a2c5-7ec9a9d5ec65" adSlotDescriptions:[NSArray arrayWithObjects:slot1, slot2, nil]];
+	
+	//Use the .version property to check that the latest SDK is included
+	NSLog(@"GSAdEngine is loaded with version %@",GSAdEngine.version);
+    
+    [self.window makeKeyAndVisible];    
     return YES;
 }
 

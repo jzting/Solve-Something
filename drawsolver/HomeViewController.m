@@ -10,9 +10,11 @@
 #import "SolveViewController.h"
 #import "AssetsLibrary/AssetsLibrary.h"
 #import "FlurryAnalytics.h"
+#import "GSAdEngine.h"
 
 @implementation HomeViewController
 
+@synthesize gsAdView;
 @synthesize picker;
 
 - (void)didReceiveMemoryWarning
@@ -31,6 +33,9 @@
     
     self.picker = [[UIImagePickerController alloc] init];
     self.picker.delegate = self;
+    
+	self.gsAdView = [GSAdView adViewForSlotNamed:@"bannerSlot" delegate:self refreshInterval:kGSMinimumRefreshInterval];    
+    [GSAdEngine setFullScreenDelegate:self forSlotNamed:@"fullscreenSlot"];    
     
 //    self.picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
 }
@@ -76,7 +81,7 @@
                 SolveViewController *viewController = [[[SolveViewController alloc] initWithNibName:@"SolveViewController" bundle:nil] autorelease];
                 viewController.image = [UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]];
                 [self.navigationController pushViewController:viewController animated:YES];
-                
+                [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];                                
             }];
             [group numberOfAssets];
         };
@@ -103,6 +108,78 @@
     viewController.image = [info valueForKey:UIImagePickerControllerOriginalImage];
     [self dismissModalViewControllerAnimated:NO];       
     [self.navigationController pushViewController:viewController animated:YES];
+    [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];
+}
+
+# pragma -
+//Delegate method is called when an ad is ready to be displayed
+- (void)greystripeAdReadyForSlotNamed:(NSString *)a_name
+{
+	NSLog(@"Ad for slot named %@ is ready.",a_name);
+	
+	//Depending on which ad is ready, put the banner view into the view hiearchy, or enable the fullscreen ad button
+	if ([a_name isEqual:@"fullscreenSlot"]) {        
+	} else if ([a_name isEqual:@"bannerSlot"]) {
+		[self.view addSubview:gsAdView];
+	}
+} 
+
+//Delegate methods for full screen or click-through open and close. This is the place to suspend/restart other app activity.
+- (void)greystripeFullScreenDisplayWillOpen {
+    
+	NSLog(@"Full screen ad is opening.");
+}
+
+- (void)greystripeFullScreenDisplayWillClose {
+	NSLog(@"Full screen ad is closing.");
+}
+
+#pragma mark -
+#pragma mark iAd delegate methods
+
+- (void)moveBannerViewOnscreen {
+    CGRect newBannerFrame = self.iAdView.frame;
+    newBannerFrame.origin.y = 0;
+    	
+    [UIView beginAnimations:@"BannerViewIntro" context:NULL];
+    [UIView setAnimationDuration:0.2];      
+    self.iAdView.frame = newBannerFrame;  
+    [UIView commitAnimations];	
+}
+
+- (void)moveBannerViewOffscreen:(BOOL)animated {
+    CGRect newBannerFrame = self.iAdView.frame;
+    newBannerFrame.origin.y = -70;
+	    
+	if(animated) {
+		[UIView beginAnimations:@"BannerViewIntro" context:NULL];
+		[UIView setAnimationDuration:0.2];
+	}
+	self.iAdView.frame = newBannerFrame;	
+	
+	if(animated) {
+		[UIView commitAnimations];	
+	}
+}
+
+- (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
+    [self moveBannerViewOffscreen:YES];
+}
+
+- (void)bannerViewWillLoadAd:(ADBannerView *)banner {
+    
+}
+
+- (void)bannerViewDidLoadAd:(ADBannerView *)banner {
+    [self moveBannerViewOnscreen];  
+}
+
+- (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
+	return YES;	
+}
+
+- (void)bannerViewActionDidFinish:(ADBannerView *)banner {	
+	
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
