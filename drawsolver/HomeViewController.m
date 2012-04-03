@@ -22,12 +22,22 @@
 
 @synthesize iAdView;
 @synthesize gsAdView;
+@synthesize gsBannerView;
+@synthesize lastImage;
+@synthesize lastResults;
 @synthesize picker;
+@synthesize instructionsView;
+@synthesize logoView;
+@synthesize letsGoButton;
+@synthesize instructionsPanelView;
+@synthesize answersButton;
+@synthesize navBarView;
 @synthesize quickImportButton;
 @synthesize cameraRollButton;
 @synthesize spinner;
 @synthesize panelView;
 @synthesize lightbulbView;
+@synthesize errorView;
 @synthesize errorLabel;
 
 - (void)didReceiveMemoryWarning
@@ -49,7 +59,6 @@
 
     [self.errorLabel setFont:[UIFont fontWithName:@"MyriadPro-Regular" size:16]];        
 	self.gsAdView = [GSAdView adViewForSlotNamed:@"bannerSlot" delegate:self refreshInterval:kGSMinimumRefreshInterval];    
-    [GSAdEngine setFullScreenDelegate:self forSlotNamed:@"fullscreenSlot"];    
 }
 
 - (void)viewDidUnload
@@ -60,6 +69,14 @@
     [self setQuickImportButton:nil];
     [self setCameraRollButton:nil];
     [self setErrorLabel:nil];
+    [self setInstructionsView:nil];
+    [self setLogoView:nil];
+    [self setInstructionsPanelView:nil];
+    [self setLetsGoButton:nil];
+    [self setNavBarView:nil];
+    [self setAnswersButton:nil];
+    [self setErrorView:nil];
+    [self setGsBannerView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -74,7 +91,22 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    if(self.instructionsView.alpha == 1) {
+        CGRect newLogoFrame = self.logoView.frame;
+        newLogoFrame.origin.y = 10;       
+        
+        [UIView animateWithDuration:0.5 delay:0 options:0 animations:^{
+            self.logoView.frame = newLogoFrame;            
+        } completion:^(BOOL finished) {}];
 
+        [UIView animateWithDuration:0.5 delay:0.5 options:0 animations:^{            
+            self.instructionsPanelView.alpha = 1;        
+        } completion:^(BOOL finished) {}];        
+        
+        [UIView animateWithDuration:0.5 delay:0.75 options:0 animations:^{                
+            self.letsGoButton.alpha = 1;
+        } completion:^(BOOL finished) {}];        
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -93,6 +125,12 @@
     self.lightbulbView.hidden = YES;
     self.quickImportButton.hidden = NO;    
     self.cameraRollButton.hidden = NO;
+}
+
+- (IBAction)showAnswers:(id)sender {
+    NSLog(@"self.lastImage: %@", self.lastImage);
+    NSLog(@"self.lastResults: %@", self.lastResults);    
+    [self showAnswersWithImage:self.lastImage andResults:self.lastResults];
 }
 
 - (IBAction)quickImport:(id)sender {
@@ -122,13 +160,23 @@
 }
 
 - (IBAction)showPicker:(id)sender {
+    NSLog(@"showPicker");
     [FlurryAnalytics logEvent:@"CameraRoll"];    
-    [self presentModalViewController:self.picker animated:YES];            
+    [self presentViewController:self.picker animated:YES completion:nil];            
+}
+
+- (IBAction)dismissInstructions:(id)sender {
+    CGAffineTransform tr = CGAffineTransformScale(self.instructionsView.transform, 1.33, 1.33);    
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    self.instructionsView.alpha = 0;
+    self.instructionsView.transform = tr;
+    [UIView commitAnimations];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {    
     [FlurryAnalytics logEvent:@"CameraRoll-Finished"];
-    [self dismissModalViewControllerAnimated:NO];    
+    [self dismissViewControllerAnimated:YES completion:nil];    
     [self solveImage:[info valueForKey:UIImagePickerControllerOriginalImage]];    
 }
 
@@ -148,9 +196,8 @@
         [self sendScreen:image forVersion:version andRect:cropRect];        
     }
     else {
-        self.quickImportButton.hidden = YES;
         self.errorLabel.text = @"Sorry, this does not look like a valid screenshot. Please try again.";
-        self.errorLabel.hidden = NO;        
+        [self showErrorView];
     }                                       
 }
 
@@ -162,7 +209,6 @@
 }
 
 - (void)animateSpinner {
-    self.errorLabel.hidden = YES;
     self.spinner.hidden = NO;
     self.lightbulbView.hidden = NO;    
     self.quickImportButton.hidden = YES;
@@ -182,8 +228,20 @@
     self.spinner.hidden = YES;
 }
 
+- (void)showErrorView {
+    self.errorView.hidden = NO;  
+    self.panelView.hidden = YES;    
+}
+
+- (void)hideErrorView {
+    self.errorView.hidden = YES;  
+    self.panelView.hidden = NO;    
+}
+
 - (void)sendScreen:(UIImage *)image forVersion:(NSString *)version andRect:(CGRect)cropRect {
-    [FlurryAnalytics logEvent:@"Solve" timed:YES];    
+    [self hideErrorView];
+    //    [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];     
+    [FlurryAnalytics logEvent:@"Solve" timed:YES];  
     NSDate *start = [NSDate date];        
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);        
     NSData *imageData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imageRef], 0.10);
@@ -196,8 +254,8 @@
     NSLog(@"request_id: %@", request_id);
     NSLog(@"auth_code: %@", auth_code);    
     
-    // NSURL *url = [NSURL URLWithString:@"http://drawsolver.jzlabs.com"];                   
-    NSURL *url = [NSURL URLWithString:@"http://192.168.1.125:5001"];
+    NSURL *url = [NSURL URLWithString:@"http://drawsolver.jzlabs.com"];                   
+//    NSURL *url = [NSURL URLWithString:@"http://192.168.1.125:5001"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:version, @"version", request_id, @"request_id", auth_code, @"auth_code", [NSString stringWithFormat:@"%f", timestamp], @"timestamp", nil];    
@@ -217,23 +275,20 @@
         [FlurryAnalytics logEvent:@"Processing Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[JSON objectForKey:@"time_taken"], @"seconds" , nil]];        
         [FlurryAnalytics logEvent:@"Network Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f", networkTime], @"seconds" , nil]];
         [FlurryAnalytics logEvent:@"Total Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSinceDate:start]], @"seconds" , nil]];
-        
-        // TODO: if no results, show message        
-        NSString *messageString = [[JSON objectForKey:@"results"] componentsJoinedByString:@"  "];        
-        
-        NSString *logString = [NSString stringWithFormat:@"started %@\nprocessed in %@s\ntotal in %0.2fs", [JSON objectForKey:@"started"], [JSON objectForKey:@"time_taken"], [[NSDate date] timeIntervalSinceDate:start]];
-        
+
         NSLog(@"processed in %@s", [JSON objectForKey:@"time_taken"]);
         NSLog(@"total time: %0.2fs", [[NSDate date] timeIntervalSinceDate:start]);
         
-        SolveViewController *viewController = [[[SolveViewController alloc] initWithNibName:@"SolveViewController" bundle:nil] autorelease];
-        viewController.image = image;
-        viewController.results = [JSON objectForKey:@"results"];
-        [self presentModalViewController:viewController animated:YES];
-        
-        //    [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];          
-//        resultLabel.text = messageString;
-//        logLabel.text = logString;        
+        if([[JSON results] count] == 0) {
+            [self stopSpinner];    
+            self.errorLabel.text = @"Sorry, there was an error analyzing your screenshot. Please try again.";
+            [self showErrorView];             
+        }
+        else {        
+            self.navBarView.image = [UIImage imageNamed:@"navbar-import"];
+            self.answersButton.enabled = YES;                
+            [self showAnswersWithImage:image andResults:[JSON objectForKey:@"results"]];
+        }
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {                    
         [FlurryAnalytics endTimedEvent:@"Solve" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%i", [response statusCode]], @"result", nil]];        
@@ -258,9 +313,8 @@
         NSLog(@"error: %@ %@", error, request);                            
    
         [self stopSpinner];    
-        self.cameraRollButton.hidden = NO;
         self.errorLabel.text = errorMessage;
-        self.errorLabel.hidden = NO;
+        [self showErrorView];        
     }];            
     
     [operation setUploadProgressBlock:^(NSInteger bytesWritten, NSInteger totalBytesWritten, NSInteger totalBytesExpectedToWrite) {
@@ -272,7 +326,14 @@
     [self animateSpinner];
 }
 
-
+- (void)showAnswersWithImage:(UIImage *)image andResults:(NSArray *)results {
+    SolveViewController *viewController = [[[SolveViewController alloc] initWithNibName:@"SolveViewController" bundle:nil] autorelease];
+    viewController.image = image;
+    viewController.results = results;
+    self.lastImage = image;
+    self.lastResults = results;
+    [self presentViewController:viewController animated:YES completion:nil];
+}
 
 # pragma mark - Greystripe Delegates
 - (void)greystripeAdReadyForSlotNamed:(NSString *)a_name
@@ -282,55 +343,61 @@
 	//Depending on which ad is ready, put the banner view into the view hiearchy, or enable the fullscreen ad button
 	if ([a_name isEqual:@"fullscreenSlot"]) {        
 	} else if ([a_name isEqual:@"bannerSlot"]) {
-		[self.view addSubview:gsAdView];
+        [self.gsBannerView addSubview:gsAdView];
 	}
 } 
 
-- (void)greystripeFullScreenDisplayWillOpen {
-    
-	NSLog(@"Full screen ad is opening.");
-}
-
 - (void)greystripeFullScreenDisplayWillClose {
-	NSLog(@"Full screen ad is closing.");
+	[self showAnswers:nil];
 }
 
 #pragma mark - iAd Delegates
-- (void)moveBannerViewOnscreen {
-    CGRect newBannerFrame = self.iAdView.frame;
-    newBannerFrame.origin.y = 0;
-    	
-    [UIView beginAnimations:@"BannerViewIntro" context:NULL];
-    [UIView setAnimationDuration:0.2];      
-    self.iAdView.frame = newBannerFrame;  
-    [UIView commitAnimations];	
+- (void)adjustPanelFrame {
+    NSLog(@"adjustPanelFrame");
+    CGRect newPanelFrame = self.panelView.frame;
+    newPanelFrame.origin.y = 120;       
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    [self.panelView setFrame:newPanelFrame];
+    [UIView commitAnimations];    
 }
 
-- (void)moveBannerViewOffscreen:(BOOL)animated {
+- (void)hideGreystripeAd {
+    NSLog(@"hideGreystripeAd");    
     CGRect newBannerFrame = self.iAdView.frame;
-    newBannerFrame.origin.y = -70;
-	    
-	if(animated) {
-		[UIView beginAnimations:@"BannerViewIntro" context:NULL];
-		[UIView setAnimationDuration:0.2];
-	}
-	self.iAdView.frame = newBannerFrame;	
-	
-	if(animated) {
-		[UIView commitAnimations];	
-	}
+    newBannerFrame.origin.y = 430;       
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    [self.iAdView setFrame:newBannerFrame];    
+    self.gsBannerView.alpha = 0;
+    [UIView commitAnimations];
+}
+
+- (void)showGreystripeAd {
+    NSLog(@"showGreystripeAd");
+    CGRect newBannerFrame = self.iAdView.frame;
+    newBannerFrame.origin.y = 480;    
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    [self.iAdView setFrame:newBannerFrame];
+    self.gsBannerView.alpha = 1;
+    [UIView commitAnimations];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
-    [self moveBannerViewOffscreen:YES];
-}
-
-- (void)bannerViewWillLoadAd:(ADBannerView *)banner {
+    NSLog(@"didFailToReceiveAdWithError");
+    [self showGreystripeAd];
     
 }
 
+- (void)bannerViewWillLoadAd:(ADBannerView *)banner {
+    NSLog(@"bannerViewWillLoadAd");    
+}
+
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
-    [self moveBannerViewOnscreen];  
+    NSLog(@"bannerViewDidLoadAd");    
+    [self adjustPanelFrame];
+    [self hideGreystripeAd];  
 }
 
 - (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
@@ -344,7 +411,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (void)dealloc {
@@ -354,6 +421,14 @@
     [quickImportButton release];
     [cameraRollButton release];
     [errorLabel release];
+    [instructionsView release];
+    [logoView release];
+    [instructionsPanelView release];
+    [letsGoButton release];
+    [navBarView release];
+    [answersButton release];
+    [errorView release];
+    [gsBannerView release];
     [super dealloc];
 }
 

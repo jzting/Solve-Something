@@ -43,5 +43,9 @@
 	</array>
 	<key>UIPrerenderedIcon</key>
 	<true/>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UILaunchImageFile</key>
+	<string>default</string>
 </dict>
 </plist>

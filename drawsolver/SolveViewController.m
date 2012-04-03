@@ -12,6 +12,8 @@
 #import "Appirater.h"
 #import "FlurryAnalytics.h"
 #define SHARED_SECRET @"allyourdrawingsarebelongtous!"
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
 
 @implementation SolveViewController
 @synthesize screenshotView;
@@ -19,6 +21,7 @@
 @synthesize results;
 @synthesize resultLabel;
 @synthesize logLabel;
+@synthesize resultsTableView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -59,15 +62,20 @@
     CGImageRelease(imageRef);  
     
     self.screenshotView.image = croppedImage;
-    [self.resultLabel setFont:[UIFont fontWithName:@"GoLong" size:40]];            
-    self.resultLabel.text = [[results componentsJoinedByString:@"\n"] uppercaseString];
+    
+    if([self.results count] == 1) {
+        [self.resultsTableView setContentInset:UIEdgeInsetsMake(51, 0, 0, 0)];
+    }
+    else if([self.results count] == 2) {
+        [self.resultsTableView setContentInset:UIEdgeInsetsMake(22, 0, 0, 0)];
+    }
 }
-
 
 - (void)viewDidUnload
 {
     [self setResultLabel:nil];
     [self setLogLabel:nil];
+    [self setResultsTableView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -85,17 +93,53 @@
     }
     else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508paid://"]]) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508paid://"]];                
-    }
-    
+    }    
 }
 
 - (IBAction)backToImport:(id)sender {
-    [self dismissModalViewControllerAnimated:YES];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+# pragma mark UITableView methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+	return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.results count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [self.resultsTableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+    }
+    
+    // Configure the cell...
+    if([indexPath indexAtPosition:1] != [self.results count] - 1) {
+        cell.contentView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg-table-cell"]];
+    }
+    else {
+        cell.contentView.backgroundColor = [UIColor clearColor];
+    }
+    
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.font = [UIFont fontWithName:@"GoLong" size:50];
+    cell.textLabel.textColor = [UIColor whiteColor];
+    cell.textLabel.shadowColor = UIColorFromRGB(0x1e8538);
+    cell.textLabel.shadowOffset = CGSizeMake(1,1);
+    cell.textAlignment = UITextAlignmentCenter;
+    cell.textLabel.text = [[self.results objectAtIndex:[indexPath indexAtPosition:1]] uppercaseString];    
+    
+    return cell;
 }
 
 - (void)dealloc {
     [resultLabel release];
     [logLabel release];
+    [resultsTableView release];
     [super dealloc];
 }
 @end
