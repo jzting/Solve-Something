@@ -53,7 +53,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;        
     self.picker = [[UIImagePickerController alloc] init];
     self.picker.delegate = self;
 
@@ -185,7 +184,7 @@
     NSString *version;
     CGRect cropRect;
     
-    if(image.size.width == 320 && image.size.height == 640) {
+    if(image.size.width == 320 && image.size.height == 480) {
         version = @"lo";
         cropRect = CGRectMake(0, 331, 320, 149);
         [self sendScreen:image forVersion:version andRect:cropRect];
@@ -240,11 +239,18 @@
 
 - (void)sendScreen:(UIImage *)image forVersion:(NSString *)version andRect:(CGRect)cropRect {
     [self hideErrorView];
-    //    [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];     
-    [FlurryAnalytics logEvent:@"Solve" timed:YES];  
+    self.answersButton.enabled = NO;
+    [GSAdEngine displayFullScreenAdForSlotNamed:@"fullscreenSlot"];
+    [FlurryAnalytics logEvent:@"Solve" timed:YES];
     NSDate *start = [NSDate date];        
-    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);        
-    NSData *imageData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imageRef], 0.10);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
+
+    float quality = 0.10;
+    if([version isEqualToString:@"lo"]) {
+        quality = 0.5;
+    }
+
+    NSData *imageData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imageRef], quality);
     CGImageRelease(imageRef);    
     
     NSString *request_id = [self createUUID];
@@ -269,7 +275,6 @@
         [self stopSpinner];        
         NSLog(@"JSON: %@", JSON); 
         [Appirater userDidSignificantEvent:YES];
-        
         double networkTime = [[NSDate date] timeIntervalSinceDate:start] - [[JSON objectForKey:@"time_taken"] floatValue];        
         [FlurryAnalytics endTimedEvent:@"Solve" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%i", [response statusCode]], @"result", nil]];    
         [FlurryAnalytics logEvent:@"Processing Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[JSON objectForKey:@"time_taken"], @"seconds" , nil]];        
@@ -279,7 +284,7 @@
         NSLog(@"processed in %@s", [JSON objectForKey:@"time_taken"]);
         NSLog(@"total time: %0.2fs", [[NSDate date] timeIntervalSinceDate:start]);
         
-        if([[JSON results] count] == 0) {
+        if([[JSON objectForKey:@"results"] count] == 0) {
             [self stopSpinner];    
             self.errorLabel.text = @"Sorry, there was an error analyzing your screenshot. Please try again.";
             [self showErrorView];             
@@ -311,7 +316,10 @@
         }
         
         NSLog(@"error: %@ %@", error, request);                            
-   
+        
+        if(self.lastImage) {
+            self.answersButton.enabled = YES;
+        }
         [self stopSpinner];    
         self.errorLabel.text = errorMessage;
         [self showErrorView];        
@@ -332,7 +340,8 @@
     viewController.results = results;
     self.lastImage = image;
     self.lastResults = results;
-    [self presentViewController:viewController animated:YES completion:nil];
+
+    [self.navigationController pushViewController:viewController animated:NO];    
 }
 
 # pragma mark - Greystripe Delegates

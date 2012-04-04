@@ -28,7 +28,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;                
     }
     return self;
 }
@@ -50,7 +49,7 @@
     
     CGRect cropRect;
     
-    if(image.size.width == 320 && image.size.height == 640) {
+    if(image.size.width == 320 && image.size.height == 480) {
         cropRect = CGRectMake(0, 53, 320, 277);
     }
     else if(image.size.width == 640 && image.size.height == 960) {
@@ -88,16 +87,16 @@
 }
 
 - (IBAction)backToGame:(id)sender {
-    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508free://"]]) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508free://"]];        
-    }
-    else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508paid://"]]) {
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508paid://"]]) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508paid://"]];                
     }    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508free://"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508free://"]];
+    }
 }
 
 - (IBAction)backToImport:(id)sender {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 # pragma mark UITableView methods

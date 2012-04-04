@@ -15,6 +15,7 @@
 @implementation AppDelegate
 
 @synthesize window = _window;
+@synthesize navigationController = _navigationController;
 
 void uncaughtExceptionHandler(NSException *exception) {
     [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
@@ -32,9 +33,12 @@ void uncaughtExceptionHandler(NSException *exception) {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
      
     HomeViewController *homeViewController = [[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil] autorelease];
-    self.window.rootViewController = homeViewController;
+    self.navigationController = [[[UINavigationController alloc] initWithRootViewController:homeViewController] autorelease];
+    self.navigationController.navigationBarHidden = YES;
+    self.window.rootViewController = self.navigationController;
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+
     [FlurryAnalytics startSession:@"AQKQNCHBKC4Y5PIN8VLB"];
     [Appirater appLaunched:YES];
     
