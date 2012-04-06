@@ -1,17 +1,14 @@
 //
 //  SolveViewController.m
-//  drawsolver
+//  Solve Something
 //
 //  Created by Jason Ting on 3/17/12.
 //  Copyright (c) 2012 jzlabs. All rights reserved.
 //
 
 #import "SolveViewController.h"
-#import "AFHTTPClient.h"
-#import "AFJSONRequestOperation.h"
-#import "Appirater.h"
 #import "FlurryAnalytics.h"
-#define SHARED_SECRET @"allyourdrawingsarebelongtous!"
+
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
@@ -46,14 +43,28 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
-    CGRect cropRect;
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    CGRect cropRect = CGRectZero;
     
     if(image.size.width == 320 && image.size.height == 480) {
         cropRect = CGRectMake(0, 53, 320, 277);
+        if([userDefaults objectForKey:@"image_rect_lo"]) {
+            NSArray *imageRect = [userDefaults objectForKey:@"image_rect_lo"];
+            cropRect = CGRectMake([[imageRect objectAtIndex:0] floatValue],
+                                  [[imageRect objectAtIndex:1] floatValue],
+                                  [[imageRect objectAtIndex:2] floatValue],
+                                  [[imageRect objectAtIndex:3] floatValue]);
+        }
     }
     else if(image.size.width == 640 && image.size.height == 960) {
         cropRect = CGRectMake(0, 105, 640, 554);
+        if([userDefaults objectForKey:@"image_rect_hi"]) {
+            NSArray *imageRect = [userDefaults objectForKey:@"image_rect_hi"];
+            cropRect = CGRectMake([[imageRect objectAtIndex:0] floatValue],
+                                  [[imageRect objectAtIndex:1] floatValue],
+                                  [[imageRect objectAtIndex:2] floatValue],
+                                  [[imageRect objectAtIndex:3] floatValue]);
+        }
     }
     
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);        
@@ -68,6 +79,10 @@
     else if([self.results count] == 2) {
         [self.resultsTableView setContentInset:UIEdgeInsetsMake(22, 0, 0, 0)];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [FlurryAnalytics logPageView];
 }
 
 - (void)viewDidUnload
@@ -88,9 +103,11 @@
 
 - (IBAction)backToGame:(id)sender {
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508paid://"]]) {
+        [FlurryAnalytics logEvent:@"BackToGame-Paid"];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508paid://"]];                
     }    
     else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb225826214141508free://"]]) {
+        [FlurryAnalytics logEvent:@"BackToGame-Free"];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb225826214141508free://"]];
     }
 }
@@ -123,16 +140,20 @@
     else {
         cell.contentView.backgroundColor = [UIColor clearColor];
     }
-    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.font = [UIFont fontWithName:@"GoLong" size:50];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.shadowColor = UIColorFromRGB(0x1e8538);
     cell.textLabel.shadowOffset = CGSizeMake(1,1);
-    cell.textAlignment = UITextAlignmentCenter;
+    cell.textLabel.textAlignment = UITextAlignmentCenter;
     cell.textLabel.text = [[self.results objectAtIndex:[indexPath indexAtPosition:1]] uppercaseString];    
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self backToGame:nil];
 }
 
 - (void)dealloc {

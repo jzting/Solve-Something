@@ -1,6 +1,6 @@
 //
-//  ViewController.m
-//  drawsolver
+//  HomeViewController.m
+//  Solve Something
 //
 //  Created by Jason Ting on 3/17/12.
 //  Copyright (c) 2012 jzlabs. All rights reserved.
@@ -15,8 +15,8 @@
 #import "AFHTTPClient.h"
 #import "AFJSONRequestOperation.h"
 #import "Appirater.h"
+#import "NSString+HMAC.h"
 #define SHARED_SECRET @"allyourdrawingsarebelongtous!"
-
 
 @implementation HomeViewController
 
@@ -53,7 +53,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.picker = [[UIImagePickerController alloc] init];
+    self.picker = [[[UIImagePickerController alloc] init] autorelease];
     self.picker.delegate = self;
 
     [self.errorLabel setFont:[UIFont fontWithName:@"MyriadPro-Regular" size:16]];        
@@ -90,6 +90,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [FlurryAnalytics logPageView];
     if(self.instructionsView.alpha == 1) {
         CGRect newLogoFrame = self.logoView.frame;
         newLogoFrame.origin.y = 10;       
@@ -127,8 +128,6 @@
 }
 
 - (IBAction)showAnswers:(id)sender {
-    NSLog(@"self.lastImage: %@", self.lastImage);
-    NSLog(@"self.lastResults: %@", self.lastResults);    
     [self showAnswersWithImage:self.lastImage andResults:self.lastResults];
 }
 
@@ -141,30 +140,43 @@
             if(group == nil) return;
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {         
                 if(result == nil || index < [group numberOfAssets] - 1) return;
-                NSLog(@"index: %i", index);
                 [self solveImage:[UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]]];
             }];
             [group numberOfAssets];
         };
         void(^assetGroupEnumberatorFailure)(NSError *) = ^(NSError *error){        
-            NSLog(@"A problem occured %@", [error description]);
+            NSString *otherButton = nil;
+            if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"prefs://"]]) {
+                otherButton = @"Settings";
+            }
+            [FlurryAnalytics logEvent:@"Quick Import Error"];
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Whoops!"
+                                                                 message:@"We need location permission to import your latest photo. Please go to Settings and turn Location Services to \"ON\""
+                                                                delegate:self
+                                                       cancelButtonTitle:@"OK"
+                                                       otherButtonTitles:otherButton, nil] autorelease];
+            [alertView show];
         };  
         [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos
                                usingBlock:assetGroupEnumerator 
                              failureBlock:assetGroupEnumberatorFailure];        
         [pool release];
     });
-    
-
 }
 
 - (IBAction)showPicker:(id)sender {
-    NSLog(@"showPicker");
     [FlurryAnalytics logEvent:@"CameraRoll"];    
     [self presentViewController:self.picker animated:YES completion:nil];            
 }
 
 - (IBAction)dismissInstructions:(id)sender {
+    if([sender tag] == 100) {
+        [FlurryAnalytics logEvent:@"Dismiss-Panel"];
+    }
+    else {
+        [FlurryAnalytics logEvent:@"Dismiss-Button"];
+    }
+
     CGAffineTransform tr = CGAffineTransformScale(self.instructionsView.transform, 1.33, 1.33);    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
@@ -181,21 +193,39 @@
 
 # pragma mark - Solving
 - (void)solveImage:(UIImage *)image {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *version;
     CGRect cropRect;
     
     if(image.size.width == 320 && image.size.height == 480) {
         version = @"lo";
         cropRect = CGRectMake(0, 331, 320, 149);
+        if([userDefaults objectForKey:@"letters_rect_lo"]) {
+            NSArray *lettersRect = [userDefaults objectForKey:@"letters_rect_lo"];
+            NSLog(@"letters_rect_lo %@", lettersRect);
+            cropRect = CGRectMake([[lettersRect objectAtIndex:0] floatValue],
+                                  [[lettersRect objectAtIndex:1] floatValue],
+                                  [[lettersRect objectAtIndex:2] floatValue],
+                                  [[lettersRect objectAtIndex:3] floatValue]);
+        }
         [self sendScreen:image forVersion:version andRect:cropRect];
     }
     else if(image.size.width == 640 && image.size.height == 960) {
         version = @"hi";
         cropRect = CGRectMake(0, 661, 640, 299);
+        if([userDefaults objectForKey:@"letters_rect_hi"]) {
+            NSArray *lettersRect = [userDefaults objectForKey:@"letters_rect_hi"];
+            NSLog(@"letters_rect_hi %@", lettersRect);
+            cropRect = CGRectMake([[lettersRect objectAtIndex:0] floatValue],
+                                  [[lettersRect objectAtIndex:1] floatValue],
+                                  [[lettersRect objectAtIndex:2] floatValue],
+                                  [[lettersRect objectAtIndex:3] floatValue]);
+        }
         [self sendScreen:image forVersion:version andRect:cropRect];        
     }
     else {
         self.errorLabel.text = @"Sorry, this does not look like a valid screenshot. Please try again.";
+        [FlurryAnalytics logEvent:@"Invalid Screenshot" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%0.2f", image.size.width], @"width", [NSString stringWithFormat:@"%0.2f", image.size.height], @"height", nil]];        
         [self showErrorView];
     }                                       
 }
@@ -244,10 +274,18 @@
     [FlurryAnalytics logEvent:@"Solve" timed:YES];
     NSDate *start = [NSDate date];        
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
     float quality = 0.10;
+    if([userDefaults objectForKey:@"quality_hi"]) {
+        quality = [userDefaults floatForKey:@"quality_hi"];
+    }
+
     if([version isEqualToString:@"lo"]) {
         quality = 0.5;
+        if([userDefaults objectForKey:@"quality_lo"]) {
+            quality = [userDefaults floatForKey:@"quality_lo"];
+        }
     }
 
     NSData *imageData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imageRef], quality);
@@ -256,24 +294,18 @@
     NSString *request_id = [self createUUID];
     double timestamp = [[NSDate date] timeIntervalSince1970];    
     NSString *auth_code = [[NSString stringWithFormat:@"%@:%f", request_id, timestamp]  HMACWithSecret:SHARED_SECRET];
-    
-    NSLog(@"request_id: %@", request_id);
-    NSLog(@"auth_code: %@", auth_code);    
-    
     NSURL *url = [NSURL URLWithString:@"http://drawsolver.jzlabs.com"];                   
-//    NSURL *url = [NSURL URLWithString:@"http://192.168.1.125:5001"];
+    //NSURL *url = [NSURL URLWithString:@"http://192.168.1.125:5001"];
     
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    AFHTTPClient *httpClient = [[[AFHTTPClient alloc] initWithBaseURL:url] autorelease];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:version, @"version", request_id, @"request_id", auth_code, @"auth_code", [NSString stringWithFormat:@"%f", timestamp], @"timestamp", nil];    
     
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"/" parameters:params constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {                    
         [formData appendPartWithFileData:imageData name:@"file" fileName:@"screen.jpg" mimeType:@"image/jpeg"];
-        
     }];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {        
-        [self stopSpinner];        
-        NSLog(@"JSON: %@", JSON); 
+        [self stopSpinner];
         [Appirater userDidSignificantEvent:YES];
         double networkTime = [[NSDate date] timeIntervalSinceDate:start] - [[JSON objectForKey:@"time_taken"] floatValue];        
         [FlurryAnalytics endTimedEvent:@"Solve" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%i", [response statusCode]], @"result", nil]];    
@@ -281,10 +313,11 @@
         [FlurryAnalytics logEvent:@"Network Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f", networkTime], @"seconds" , nil]];
         [FlurryAnalytics logEvent:@"Total Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSinceDate:start]], @"seconds" , nil]];
 
-        NSLog(@"processed in %@s", [JSON objectForKey:@"time_taken"]);
-        NSLog(@"total time: %0.2fs", [[NSDate date] timeIntervalSinceDate:start]);
+        NSLog(@"Processed in %@s", [JSON objectForKey:@"time_taken"]);
+        NSLog(@"Total time: %0.2fs", [[NSDate date] timeIntervalSinceDate:start]);
         
         if([[JSON objectForKey:@"results"] count] == 0) {
+            [FlurryAnalytics logEvent:@"No Results"];
             [self stopSpinner];    
             self.errorLabel.text = @"Sorry, there was an error analyzing your screenshot. Please try again.";
             [self showErrorView];             
@@ -298,24 +331,24 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {                    
         [FlurryAnalytics endTimedEvent:@"Solve" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%i", [response statusCode]], @"result", nil]];        
         [FlurryAnalytics logEvent:@"Total Time" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSinceDate:start]], @"seconds" , nil]];        
-        NSLog(@"statusCode: %i", [response statusCode]);
+        NSLog(@"Status: %i", [response statusCode]);
         NSString *errorMessage = @"Sorry, there was an error analyzing your screenshot. Please try again.";
         
         switch([response statusCode]) {
             case 0:
+                [FlurryAnalytics logEvent:@"Connection Timeout"];
                 errorMessage = @"Error connecting to solving server. Please check your internet connection.";
                 break;
             case 410:
-                [FlurryAnalytics logEvent:@"Expired Code" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[JSON objectForKey:@"difference"] , @"difference", nil]];                
+                [FlurryAnalytics logEvent:@"Expired Code"];
                 break;
             case 500:
-                [FlurryAnalytics logEvent:@"Invalid Screenshot" withParameters:[NSDictionary dictionaryWithObjectsAndKeys:[JSON objectForKey:@"filename"] , @"filename", nil]];
+                [FlurryAnalytics logEvent:@"Invalid Screenshot"];
+                [self checkForServerUpdate];
                 break;
             default:
                 break;
         }
-        
-        NSLog(@"error: %@ %@", error, request);                            
         
         if(self.lastImage) {
             self.answersButton.enabled = YES;
@@ -334,6 +367,27 @@
     [self animateSpinner];
 }
 
+- (void)checkForServerUpdate {
+    NSLog(@"checking for server update");
+    NSURL *url = [NSURL URLWithString:@"http://drawsolver.jzlabs.com/update"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSDictionary *data = [JSON objectForKey:@"data"];
+        NSDictionary *hi = [data objectForKey:@"hi"];
+        NSDictionary *lo = [data objectForKey:@"lo"];
+        NSLog(@"hi: %@", hi);
+        NSLog(@"lo: %@", lo);
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[userDefaults setObject:[lo objectForKey:@"quality"] forKey:@"quality_lo"];
+		[userDefaults setObject:[hi objectForKey:@"quality"] forKey:@"quality_hi"];
+		[userDefaults setObject:[lo objectForKey:@"image_rect"] forKey:@"image_rect_lo"];
+		[userDefaults setObject:[hi objectForKey:@"image_rect"] forKey:@"image_rect_hi"];
+		[userDefaults setObject:[lo objectForKey:@"letters_rect"] forKey:@"letters_rect_lo"];
+		[userDefaults setObject:[hi objectForKey:@"letters_rect"] forKey:@"letters_rect_hi"];
+    } failure:nil];
+    [operation start];
+}
+
 - (void)showAnswersWithImage:(UIImage *)image andResults:(NSArray *)results {
     SolveViewController *viewController = [[[SolveViewController alloc] initWithNibName:@"SolveViewController" bundle:nil] autorelease];
     viewController.image = image;
@@ -344,11 +398,23 @@
     [self.navigationController pushViewController:viewController animated:NO];    
 }
 
+# pragma mark - UIAlertView
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	switch (buttonIndex) {
+		case 1:
+		{
+            [FlurryAnalytics logEvent:@"Enabling Location"];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"]];
+			break;
+		}
+		default:
+			break;
+	}
+}
+
 # pragma mark - Greystripe Delegates
 - (void)greystripeAdReadyForSlotNamed:(NSString *)a_name
 {
-	NSLog(@"Ad for slot named %@ is ready.",a_name);
-	
 	//Depending on which ad is ready, put the banner view into the view hiearchy, or enable the fullscreen ad button
 	if ([a_name isEqual:@"fullscreenSlot"]) {        
 	} else if ([a_name isEqual:@"bannerSlot"]) {
@@ -357,12 +423,12 @@
 } 
 
 - (void)greystripeFullScreenDisplayWillClose {
+    [FlurryAnalytics logEvent:@"Greystripe Ad Closed"];
 	[self showAnswers:nil];
 }
 
 #pragma mark - iAd Delegates
 - (void)adjustPanelFrame {
-    NSLog(@"adjustPanelFrame");
     CGRect newPanelFrame = self.panelView.frame;
     newPanelFrame.origin.y = 120;       
     [UIView beginAnimations:nil context:nil];
@@ -372,7 +438,6 @@
 }
 
 - (void)hideGreystripeAd {
-    NSLog(@"hideGreystripeAd");    
     CGRect newBannerFrame = self.iAdView.frame;
     newBannerFrame.origin.y = 430;       
     [UIView beginAnimations:nil context:nil];
@@ -383,7 +448,6 @@
 }
 
 - (void)showGreystripeAd {
-    NSLog(@"showGreystripeAd");
     CGRect newBannerFrame = self.iAdView.frame;
     newBannerFrame.origin.y = 480;    
     [UIView beginAnimations:nil context:nil];
@@ -394,17 +458,14 @@
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
-    NSLog(@"didFailToReceiveAdWithError");
     [self showGreystripeAd];
-    
 }
 
 - (void)bannerViewWillLoadAd:(ADBannerView *)banner {
-    NSLog(@"bannerViewWillLoadAd");    
 }
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
-    NSLog(@"bannerViewDidLoadAd");    
+    [FlurryAnalytics logEvent:@"iAd Loaded"];
     [self adjustPanelFrame];
     [self hideGreystripeAd];  
 }
@@ -414,7 +475,7 @@
 }
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {	
-	
+    [FlurryAnalytics logEvent:@"iAd Closed"];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

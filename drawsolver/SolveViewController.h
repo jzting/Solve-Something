@@ -1,6 +1,6 @@
 //
 //  SolveViewController.h
-//  drawsolver
+//  Solve Something
 //
 //  Created by Jason Ting on 3/17/12.
 //  Copyright (c) 2012 jzlabs. All rights reserved.

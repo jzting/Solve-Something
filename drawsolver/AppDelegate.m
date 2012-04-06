@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  drawsolver
+//  Solve Something
 //
 //  Created by Jason Ting on 3/17/12.
 //  Copyright (c) 2012 jzlabs. All rights reserved.
@@ -10,7 +10,6 @@
 #import "HomeViewController.h"
 #import "Appirater.h"
 #import "FlurryAnalytics.h"
-
 
 @implementation AppDelegate
 
@@ -47,10 +46,10 @@ void uncaughtExceptionHandler(NSException *exception) {
 	GSAdSlotDescription * slot2 = [GSAdSlotDescription descriptionWithSize:kGSAdSizeIPhoneFullScreen name:@"fullscreenSlot"];
 	
 	//Start the GSAdEngine with our slots.
-	[GSAdEngine startupWithAppID:@"bd7e5b28-f555-4edf-a2c5-7ec9a9d5ec65" adSlotDescriptions:[NSArray arrayWithObjects:slot1, slot2, nil]];
-	
+	[GSAdEngine startupWithAppID:@"9d713c2a-841f-4205-8702-0ba42387b393" adSlotDescriptions:[NSArray arrayWithObjects:slot1, slot2, nil]];
+
 	//Use the .version property to check that the latest SDK is included
-	NSLog(@"GSAdEngine is loaded with version %@",GSAdEngine.version);
+    //NSLog(@"GSAdEngine is loaded with version %@ and id %@", GSAdEngine.version, [GSAdEngine hashedDeviceIdentifier]);
     
     [self.window makeKeyAndVisible];    
     return YES;

@@ -1,6 +1,6 @@
 //
 //  HomeViewController.h
-//  drawsolver
+//  Solve Something
 //
 //  Created by Jason Ting on 3/17/12.
 //  Copyright (c) 2012 jzlabs. All rights reserved.
@@ -11,7 +11,7 @@
 #import "GreystripeDelegate.h"
 #import "GSAdView.h"
 
-@interface HomeViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate, ADBannerViewDelegate, GreystripeDelegate> {
+@interface HomeViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate, ADBannerViewDelegate, GreystripeDelegate, UIAlertViewDelegate> {
     GSAdView *gsAdView;
     ADBannerView *iAdView;
     UIImage *lastImage;
@@ -42,5 +42,12 @@
 - (IBAction)showPicker:(id)sender;
 - (IBAction)dismissInstructions:(id)sender;
 - (IBAction)showAnswers:(id)sender;
+- (void)resetUI;
+- (void)showAnswers:(id)sender;
+- (void)solveImage:(UIImage *)image;
+- (void)sendScreen:(UIImage *)image forVersion:(NSString *)version andRect:(CGRect)cropRect;
+- (void)showAnswersWithImage:(UIImage *)image andResults:(NSArray *)results;
+- (void)showErrorView;
+- (void)hideErrorView;
 
 @end
